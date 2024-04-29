@@ -23,6 +23,13 @@ export default function App() {
         project: { ...project[0] },
       };
     });
+
+    setProjectState((prev) => {
+      return {
+        ...prev,
+        selectedProjectId: id,
+      };
+    });
   }
 
   function handleStartAddProject() {
@@ -63,6 +70,27 @@ export default function App() {
     });
   }
 
+  function onDeleteProject(id) {
+    let filteredProject = projectState.projects.filter(
+      (iteam) => iteam.id != id
+    );
+
+    setProjectState((prev) => {
+      return {
+        ...prev,
+        projects: filteredProject,
+        selectedProjectId: undefined,
+      };
+    });
+
+    setSelect((prev) => {
+      return {
+        ...prev,
+        state: false,
+      };
+    });
+  }
+
   let content;
   if (projectState.selectedProjectId === null) {
     content = <NewProject onAdd={handleAddProjetc} onCanlel={handleCancel} />;
@@ -73,10 +101,14 @@ export default function App() {
     <main className="h-screen flex gap-8">
       <ProjectSideBar
         onStartAddProject={handleStartAddProject}
-        projects={projectState.projects}
+        projects={projectState}
         onSelectProject={handleSelectedProject}
       />
-      {select.state ? <SelectedProject project={select.project} /> : content}
+      {select.state ? (
+        <SelectedProject project={select.project} onDelete={onDeleteProject} />
+      ) : (
+        content
+      )}
     </main>
   );
 }
