@@ -3,18 +3,39 @@ import { useState } from 'react';
 import ProjectSideBar from './components/ProjectSideBar';
 import NewProject from './components/NewProject';
 import NoProjectSelected from './components/NoProjectSelected';
+import SelectedProject from './components/SelectedProject';
 
 export default function App() {
   const [projectState, setProjectState] = useState({
     selectedProjectId: undefined,
     projects: [],
   });
+  const [select, setSelect] = useState({
+    state: false,
+    project: {},
+  });
+
+  function handleSelectedProject(id) {
+    let project = projectState.projects.filter((iteam) => iteam.id == id);
+    setSelect((prev) => {
+      return {
+        state: true,
+        project: { ...project[0] },
+      };
+    });
+  }
 
   function handleStartAddProject() {
     setProjectState((priv) => {
       return {
         ...priv,
         selectedProjectId: null,
+      };
+    });
+    setSelect((prev) => {
+      return {
+        ...prev,
+        state: false,
       };
     });
   }
@@ -53,8 +74,9 @@ export default function App() {
       <ProjectSideBar
         onStartAddProject={handleStartAddProject}
         projects={projectState.projects}
+        onSelectProject={handleSelectedProject}
       />
-      {content}
+      {select.state ? <SelectedProject project={select.project} /> : content}
     </main>
   );
 }
